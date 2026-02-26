@@ -151,6 +151,8 @@ jobs:
       - name: Initialize Feature Flags
         run: |
           chmod +x scripts/init-flags.sh
+          echo "Waiting 15 seconds for Unleash Server to become fully ready to accept API requests..."
+          sleep 15
           ./scripts/init-flags.sh
 
       - name: Verify Flags Exist
