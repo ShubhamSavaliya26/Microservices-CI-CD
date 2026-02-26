@@ -157,7 +157,7 @@ jobs:
 
       - name: Verify Flags Exist
         run: |
-          FLAGS=$(curl -s -H "Authorization: Bearer default-token" http://localhost:4242/api/admin/projects/default/features)
+          FLAGS=$(curl -s -H "Authorization: Bearer *:*.default-token" http://localhost:4242/api/admin/projects/default/features)
           
           for flag in "premium-pricing" "order-notifications" "bulk-order-discount"; do
             if ! echo "$FLAGS" | grep -q "\"name\":\"$flag\""; then
@@ -170,10 +170,10 @@ jobs:
         run: |
           # Turn off premium-pricing
           curl -s -X POST "http://localhost:4242/api/admin/projects/default/features/premium-pricing/environments/development/off" \
-            -H "Authorization: Bearer default-token"
+            -H "Authorization: Bearer *:*.default-token"
             
           # Verify it's off
-          STATUS=$(curl -s -H "Authorization: Bearer default-token" http://localhost:4242/api/admin/projects/default/features/premium-pricing | jq -r '.environments[] | select(.name=="development") | .enabled')
+          STATUS=$(curl -s -H "Authorization: Bearer *:*.default-token" http://localhost:4242/api/admin/projects/default/features/premium-pricing | jq -r '.environments[] | select(.name=="development") | .enabled')
           
           if [ "$STATUS" != "false" ]; then
             echo "Failed to toggle flag OFF"
