@@ -16,6 +16,9 @@ public class UnleashConfiguration {
     @Value("${unleash.api-token}")
     private String unleashApiToken;
 
+    @Value("${unleash.environment:development}")
+    private String unleashEnvironment;
+
     @Bean
     public Unleash unleash() {
         UnleashConfig config = UnleashConfig.builder()
@@ -23,6 +26,7 @@ public class UnleashConfiguration {
                 .instanceId("order-service-instance")
                 .unleashAPI(unleashApiUrl)
                 .customHttpHeader("Authorization", unleashApiToken)
+                .environment(unleashEnvironment)
                 .build();
 
         return new DefaultUnleash(config);

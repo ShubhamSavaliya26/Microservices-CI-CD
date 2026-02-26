@@ -18,6 +18,9 @@ public class UnleashConfiguration {
     @Value("${unleash.api-token}")
     private String unleashApiToken;
 
+    @Value("${unleash.environment:development}")
+    private String unleashEnvironment;
+
     @Bean
     public Unleash unleash() {
 
@@ -26,6 +29,7 @@ public class UnleashConfiguration {
                 .instanceId(UUID.randomUUID().toString())
                 .unleashAPI(unleashApiUrl)
                 .customHttpHeader("Authorization", unleashApiToken)
+                .environment(unleashEnvironment)
                 .build();
 
         return new DefaultUnleash(config);
