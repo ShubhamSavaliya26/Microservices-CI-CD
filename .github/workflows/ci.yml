@@ -79,6 +79,8 @@ jobs:
         run: |
           chmod +x scripts/init-flags.sh
           ./scripts/init-flags.sh
+          echo "Waiting 15 seconds for Unleash Java SDKs to poll the newly created flags..."
+          sleep 15
 
       - name: Create Product
         run: |
