@@ -3,20 +3,25 @@ package com.example.order_service.controller;
 import com.example.order_service.dto.Product;
 import com.example.order_service.model.Orders;
 import com.example.order_service.repository.OrderRepository;
+import com.example.order_service.service.FeatureFlagService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
+@Slf4j
 public class OrderController {
 
     private final OrderRepository repo;
     private final RestTemplate restTemplate;
+    private final FeatureFlagService featureFlagService;
 
     @Value("${product.service.url}")
     private String productUrl;
@@ -43,9 +48,27 @@ public class OrderController {
             throw new RuntimeException("Product unavailable");
         }
 
-        order.setTotalPrice(product.getPrice() * order.getQuantity());
+        double totalPrice = product.getPrice() * order.getQuantity();
+
+        if (featureFlagService.isBulkDiscountEnabled() && order.getQuantity() > 5) {
+            totalPrice *= 0.85;
+        }
+
+        order.setTotalPrice(totalPrice);
         order.setStatus("CREATED");
 
-        return repo.save(order);
+        Orders savedOrder = repo.save(order);
+
+        if (featureFlagService.isOrderNotificationsEnabled()) {
+            log.info(
+                    "Order confirmed. OrderId={}, ProductId={}, Quantity={}, Total={}",
+                    savedOrder.getId(),
+                    savedOrder.getProductId(),
+                    savedOrder.getQuantity(),
+                    savedOrder.getTotalPrice()
+            );
+        }
+
+        return savedOrder;
     }
 }
