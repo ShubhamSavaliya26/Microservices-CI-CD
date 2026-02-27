@@ -41,7 +41,7 @@ services:
     build: ./product-service
     container_name: product-service
     ports:
-      - "8080:8080"
+      - "8081:8081"
     environment:
       SPRING_PROFILES_ACTIVE: docker
       UNLEASH_API_URL: http://unleash-server:4242/api
@@ -51,7 +51,7 @@ services:
     networks:
       - ecommerce-network
     healthcheck:
-      test: [ "CMD", "wget", "-q", "--spider", "http://localhost:8080/actuator/health" ]
+      test: [ "CMD", "wget", "-q", "--spider", "http://localhost:8081/actuator/health" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -63,7 +63,7 @@ services:
       - "8082:8082"
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      PRODUCT_SERVICE_URL: http://product-service:8080/api/products
+      PRODUCT_SERVICE_URL: http://product-service:8081/api/products
       UNLEASH_API_URL: http://unleash-server:4242/api
     depends_on:
       product-service:

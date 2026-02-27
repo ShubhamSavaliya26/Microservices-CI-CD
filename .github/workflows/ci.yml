@@ -84,7 +84,7 @@ jobs:
 
       - name: Create Product
         run: |
-          curl -s -X POST http://localhost:8080/api/products \
+          curl -s -X POST http://localhost:8081/api/products \
           -H "Content-Type: application/json" \
           -d '{"name":"Phone","price":800,"quantity":10}' > product.json
           cat product.json
@@ -92,9 +92,8 @@ jobs:
 
       - name: Test premium-pricing flag
         run: |
-          RESPONSE=$(curl -s http://localhost:8080/api/products/premium)
+          RESPONSE=$(curl -s http://localhost:8081/api/products/premium)
           echo "Premium Response: $RESPONSE"
-          # Premium price should be 90% of 800 = 720
           if ! echo "$RESPONSE" | grep -q "720"; then
             echo "Premium pricing failed!"
             exit 1
@@ -106,8 +105,6 @@ jobs:
           -H "Content-Type: application/json" \
           -d '{"productId":'${PRODUCT_ID}',"quantity":6}')
           echo "Order Response: $RESPONSE"
-          # Regular total = 800 * 6 = 4800
-          # Discount total = 4800 * 0.85 = 4080
           if ! echo "$RESPONSE" | grep -q "4080"; then
             echo "Bulk order discount failed!"
             exit 1
@@ -168,11 +165,9 @@ jobs:
 
       - name: Test Flag Toggle Behavior
         run: |
-          # Turn off premium-pricing
           curl -s -X POST "http://localhost:4242/api/admin/projects/default/features/premium-pricing/environments/development/off" \
             -H "Authorization: Bearer *:*.default-token"
             
-          # Verify it's off
           STATUS=$(curl -s -H "Authorization: Bearer *:*.default-token" http://localhost:4242/api/admin/projects/default/features/premium-pricing | jq -r '.environments[] | select(.name=="development") | .enabled')
           
           if [ "$STATUS" != "false" ]; then

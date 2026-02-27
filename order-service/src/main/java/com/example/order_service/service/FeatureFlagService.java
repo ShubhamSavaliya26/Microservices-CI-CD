@@ -11,9 +11,6 @@ public class FeatureFlagService {
     public FeatureFlagService(Unleash unleash) {
         this.unleash = unleash;
     }
-    public boolean isFeatureEnabled(String featureName) {
-        return unleash.isEnabled(featureName);
-    }
 
     public boolean isOrderNotificationsEnabled() {
         return unleash.isEnabled("order-notifications", false);

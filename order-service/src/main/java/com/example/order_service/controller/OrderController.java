@@ -39,10 +39,9 @@ public class OrderController {
     @PostMapping
     public Orders create(@RequestBody Orders order) {
 
-        Product product =
-                restTemplate.getForObject(
-                        productUrl + "/" + order.getProductId(),
-                        Product.class);
+        Product product = restTemplate.getForObject(
+                productUrl + "/" + order.getProductId(),
+                Product.class);
 
         if (product == null || product.getQuantity() < order.getQuantity()) {
             throw new RuntimeException("Product unavailable");
@@ -61,12 +60,13 @@ public class OrderController {
 
         if (featureFlagService.isOrderNotificationsEnabled()) {
             log.info(
-                    "Order confirmed. OrderId={}, ProductId={}, Quantity={}, Total={}",
+                    "Order confirmed. OrderId={}, ProductDetails={{Id={}, Name={}, Price={}}}, Quantity={}, Total={}",
                     savedOrder.getId(),
-                    savedOrder.getProductId(),
+                    product.getId(),
+                    product.getName(),
+                    product.getPrice(),
                     savedOrder.getQuantity(),
-                    savedOrder.getTotalPrice()
-            );
+                    savedOrder.getTotalPrice());
         }
 
         return savedOrder;
