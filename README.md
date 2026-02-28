@@ -40,7 +40,7 @@ docker-compose up --build
 1.  Open your browser and navigate to **[http://localhost:4242](http://localhost:4242)**.
 2.  Log in with the default credentials:
     *   **Username:** `admin`
-    *   **Password:** `unleash4all`
+    *   **Password:** `admin123` or `unleash4all`
 3.  **Generate an Admin Token:**
     *   Click the **Admin** button (top right).
     *   Go to **Project Settings** -> **API Access**.
